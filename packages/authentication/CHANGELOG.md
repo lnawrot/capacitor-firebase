@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+### Patch Changes
+
+- [`412e357`](https://github.com/robingenz/capacitor-firebase/commit/412e35796e3fd60167318785e4d06a07dee31dfe) ([#71](https://github.com/robingenz/capacitor-firebase/pull/71)): fix(ios): `removeAllListeners` method not found
+
 ## 0.2.1
 
 ### Patch Changes
