@@ -1,9 +1,11 @@
 import { WebPlugin } from '@capacitor/core';
 import type {
+  ActionCodeSettings,
   AuthCredential as FirebaseAuthCredential,
-  User as FirebaseUser,
-} from 'firebase/auth';
+  User as FirebaseUser} from 'firebase/auth';
 import {
+  signInWithEmailLink,
+  sendSignInLinkToEmail,
   connectAuthEmulator,
   FacebookAuthProvider,
   getAuth,
@@ -131,6 +133,20 @@ export class FirebaseAuthenticationWeb
   ): Promise<SignInResult> {
     const auth = getAuth();
     const result = await signInWithCustomToken(auth, options.token);
+    return this.createSignInResult(result.user, null);
+  }
+
+  public async sendSignInLinkToEmail(
+    options: { email: string, settings: ActionCodeSettings },
+  ): Promise<void> {
+    const auth = getAuth();
+    return sendSignInLinkToEmail(auth, options.email, options.settings);
+  }
+  public async signInWithEmailLink(
+    { email, url }: { email: string, url: string },
+  ): Promise<SignInResult> {
+    const auth = getAuth();
+    const result = await signInWithEmailLink(auth, email, url);
     return this.createSignInResult(result.user, null);
   }
 

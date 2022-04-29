@@ -1,6 +1,7 @@
 /// <reference types="@capacitor/cli" />
 
 import type { PluginListenerHandle } from '@capacitor/core';
+import type { ActionCodeSettings } from 'firebase/auth';
 
 declare module '@capacitor/cli' {
   export interface PluginsConfig {
@@ -78,6 +79,11 @@ export interface FirebaseAuthenticationPlugin {
    * Starts the Yahoo sign-in flow.
    */
   signInWithYahoo(options?: SignInOptions): Promise<SignInResult>;
+
+
+  sendSignInLinkToEmail(options: { email: string, settings: ActionCodeSettings }): Promise<void>;
+  signInWithEmailLink(options: { email: string, url: string }): Promise<SignInResult>;
+
   /**
    * Starts the sign-in flow using a phone number.
    *
