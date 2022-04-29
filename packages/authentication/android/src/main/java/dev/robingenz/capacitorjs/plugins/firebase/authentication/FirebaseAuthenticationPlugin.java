@@ -131,6 +131,16 @@ public class FirebaseAuthenticationPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void sendSignInLinkToEmail(PluginCall call) {
+        implementation.sendSignInLinkToEmail(call);
+    }
+
+    @PluginMethod
+    public void signInWithEmailLink(PluginCall call) {
+        implementation.signInWithEmailLink(call);
+    }
+
+    @PluginMethod
     public void useAppLanguage(PluginCall call) {
         implementation.useAppLanguage();
         call.resolve();
