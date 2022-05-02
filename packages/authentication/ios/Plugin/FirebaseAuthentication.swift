@@ -113,6 +113,52 @@ public typealias AuthStateChangedObserver = () -> Void
         }
     }
 
+    @objc func sendSignInLinkToEmail(_ call: CAPPluginCall) {
+        let jsActionCodeSettings = call.getObject("settings")
+        let actionCodeSettings = ActionCodeSettings()
+        actionCodeSettings.url = URL(string: jsActionCodeSettings.getString("url"))
+        actionCodeSettings.handleCodeInApp = true
+        actionCodeSettings.setIOSBundleID(Bundle.main.bundleIdentifier!)
+        actionCodeSettings.setAndroidPackageName(jsActionCodeSettings.getObject("android").getString("packageName"),
+                                                installIfNotAvailable: false,
+                                                minimumVersion: jsActionCodeSettings.getObject("android").getString("minimumVersion"))
+
+        let email = call.getString("email") ?? ""
+        self.savedCall = call
+        Auth.auth().sendSignInLink(toEmail: email,
+                        actionCodeSettings: actionCodeSettings) { _, error in
+            guard let savedCall = self.savedCall else {
+                return
+            }
+            if let error = error {
+                let errorMessage = error?.localizedDescription ?? ""
+                savedCall.reject(errorMessage, error.code, error)
+                return
+            }
+            savedCall.resolve()
+        }
+    }
+
+    @objc func signInWithEmailLink(_ call: CAPPluginCall) {
+        let url = call.getString("url", "")
+        let email = call.getString("email", "")
+
+        self.savedCall = call
+        Auth.auth().signIn(withEmail: email, link: url) { _, error in
+            guard let savedCall = self.savedCall else {
+                return
+            }
+            if let error = error {
+                let errorMessage = error?.localizedDescription ?? ""
+                savedCall.reject(errorMessage, error.code, error)
+                return
+            }
+            let user = self.getCurrentUser()
+            let result = FirebaseAuthenticationHelper.createSignInResult(credential: nil, user: user, idToken: nil, nonce: nil, accessToken: nil)
+            savedCall.resolve(result)
+        }
+    }
+
     @objc func signOut(_ call: CAPPluginCall) {
         do {
             try Auth.auth().signOut()
