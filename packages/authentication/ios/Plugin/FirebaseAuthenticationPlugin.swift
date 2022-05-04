@@ -99,6 +99,14 @@ public class FirebaseAuthenticationPlugin: CAPPlugin {
         implementation?.signInWithCustomToken(call)
     }
 
+    @objc func sendSignInLinkToEmail(_ call: CAPPluginCall) {
+        implementation?.sendSignInLinkToEmail(call)
+    }
+
+    @objc func signInWithEmailLink(_ call: CAPPluginCall) {
+        implementation?.signInWithEmailLink(call)
+    }
+
     @objc func signOut(_ call: CAPPluginCall) {
         implementation?.signOut(call)
     }
