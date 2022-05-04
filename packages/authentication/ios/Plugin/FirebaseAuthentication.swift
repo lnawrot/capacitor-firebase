@@ -5,6 +5,66 @@ import FirebaseAuth
 
 public typealias AuthStateChangedObserver = () -> Void
 
+let ERROR_CODES = [
+    AuthErrorCode.invalidCustomToken: "invalid-custom-token",
+    AuthErrorCode.customTokenMismatch: "custom-token-mismatch",
+    AuthErrorCode.invalidCredential: "invalid-credential",
+    AuthErrorCode.userDisabled: "user-disabled",
+    AuthErrorCode.operationNotAllowed: "operation-not-allowed",
+    AuthErrorCode.emailAlreadyInUse: "email-already-in-use",
+    AuthErrorCode.invalidEmail: "invalid-email",
+    AuthErrorCode.wrongPassword: "wrong-password",
+    AuthErrorCode.tooManyRequests: "too-many-requests",
+    AuthErrorCode.userNotFound: "user-not-found",
+    AuthErrorCode.accountExistsWithDifferentCredential: "account-exists-with-different-credential",
+    AuthErrorCode.requiresRecentLogin: "requires-recent-login",
+    AuthErrorCode.providerAlreadyLinked: "provider-already-linked",
+    AuthErrorCode.noSuchProvider: "no-such-provider",
+    AuthErrorCode.invalidUserToken: "invalid-user-token",
+    AuthErrorCode.networkError: "network-request-failed",
+    AuthErrorCode.userTokenExpired: "user-token-expired",
+    AuthErrorCode.invalidAPIKey: "invalid-api-key",
+    AuthErrorCode.userMismatch: "user-mismatch",
+    AuthErrorCode.credentialAlreadyInUse: "credential-already-in-use",
+    AuthErrorCode.weakPassword: "weak-password",
+    AuthErrorCode.appNotAuthorized: "app-not-authorized",
+    AuthErrorCode.expiredActionCode: "expired-action-code",
+    AuthErrorCode.invalidActionCode: "invalid-action-code",
+    AuthErrorCode.invalidMessagePayload: "invalid-message-payload",
+    AuthErrorCode.invalidSender: "invalid-sender",
+    AuthErrorCode.invalidRecipientEmail: "invalid-recipient-email",
+    AuthErrorCode.missingEmail: "invalid-email",
+    AuthErrorCode.missingIosBundleID: "missing-ios-bundle-id",
+    AuthErrorCode.missingAndroidPackageName: "missing-android-pkg-name",
+    AuthErrorCode.unauthorizedDomain: "unauthorized-domain",
+    AuthErrorCode.invalidContinueURI: "invalid-continue-uri",
+    AuthErrorCode.missingContinueURI: "missing-continue-uri",
+    AuthErrorCode.missingPhoneNumber: "missing-phone-number",
+    AuthErrorCode.invalidPhoneNumber: "invalid-phone-number",
+    AuthErrorCode.missingVerificationCode: "missing-verification-code",
+    AuthErrorCode.invalidVerificationCode: "invalid-verification-code",
+    AuthErrorCode.missingVerificationID: "missing-verification-id",
+    AuthErrorCode.invalidVerificationID: "invalid-verification-id",
+    AuthErrorCode.missingAppCredential: "missing-app-credential",
+    AuthErrorCode.invalidAppCredential: "invalid-app-credential",
+    AuthErrorCode.sessionExpired: "code-expired",
+    AuthErrorCode.quotaExceeded: "quota-exceeded",
+    AuthErrorCode.missingAppToken: "missing-apns-token",
+    AuthErrorCode.notificationNotForwarded: "notification-not-forwarded",
+    AuthErrorCode.appNotVerified: "app-not-verified",
+    AuthErrorCode.captchaCheckFailed: "captcha-check-failed",
+    AuthErrorCode.webContextAlreadyPresented: "cancelled-popup-request",
+    AuthErrorCode.webContextCancelled: "popup-closed-by-user",
+    AuthErrorCode.appVerificationUserInteractionFailure: "app-verification-user-interaction-failure",
+    AuthErrorCode.invalidClientID: "invalid-oauth-client-id",
+    AuthErrorCode.webNetworkRequestFailed: "network-request-failed",
+    AuthErrorCode.webInternalError: "internal-error",
+    AuthErrorCode.nullUser: "null-user",
+    AuthErrorCode.keychainError: "keychain-error",
+    AuthErrorCode.internalError: "internal-error",
+    AuthErrorCode.malformedJWT: "malformed-jwt",
+]
+
 @objc public class FirebaseAuthentication: NSObject {
     public let errorDeviceUnsupported = "Device is not supported. At least iOS 13 is required."
     public let errorCustomTokenSkipNativeAuth = "signInWithCustomToken cannot be used in combination with skipNativeAuth."
@@ -133,7 +193,8 @@ public typealias AuthStateChangedObserver = () -> Void
             if let error = error as NSError? {
                 let errorMessage = error.localizedDescription
                 let authError = error as NSError
-                savedCall.reject(errorMessage, String(authError.code ?? 0), error)
+                let code = ERROR_CODES[AuthErrorCode(rawValue: authError.code)!] ?? "unknown-error"
+                savedCall.reject(errorMessage, code, error)
                 return
             }
             savedCall.resolve()
@@ -152,7 +213,8 @@ public typealias AuthStateChangedObserver = () -> Void
             if let error = error {
                 let errorMessage = error.localizedDescription
                 let authError = error as NSError
-                savedCall.reject(errorMessage, String(authError.code ?? 0), error)
+                let code = ERROR_CODES[AuthErrorCode(rawValue: authError.code)!] ?? "unknown-error"
+                savedCall.reject(errorMessage, code, error)
                 return
             }
             let user = self.getCurrentUser()
