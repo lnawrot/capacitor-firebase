@@ -132,7 +132,8 @@ public typealias AuthStateChangedObserver = () -> Void
             }
             if let error = error as NSError? {
                 let errorMessage = error.localizedDescription
-                savedCall.reject(errorMessage, nil, error)
+                let authError = error as NSError
+                savedCall.reject(errorMessage, String(authError.code ?? 0), error)
                 return
             }
             savedCall.resolve()
@@ -150,7 +151,8 @@ public typealias AuthStateChangedObserver = () -> Void
             }
             if let error = error {
                 let errorMessage = error.localizedDescription
-                savedCall.reject(errorMessage, nil, error)
+                let authError = error as NSError
+                savedCall.reject(errorMessage, String(authError.code ?? 0), error)
                 return
             }
             let user = self.getCurrentUser()
